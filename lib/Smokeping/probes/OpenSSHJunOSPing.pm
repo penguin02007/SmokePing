@@ -92,6 +92,7 @@ sub pingone ($$){
     my @output = ();
     my $login = $target->{vars}{junosuser};
     my $password = $target->{vars}{junospass};
+    my $routing_instance = $target->{vars}{routing_instance};
     my $bytes = $self->{properties}{packetsize};
     my $tos = $self->{properties}{tos};
     my $pings = $self->pings($target);
@@ -115,9 +116,9 @@ sub pingone ($$){
         $tosadd = " tos $tos";
     }
     if ( $psource ) {
-        @output = $ssh->capture("ping $dest count $pings size $bytes source $psource$tosadd");
+        @output = $ssh->capture("ping routing-instance $routing_instance $dest count $pings size $bytes source $psource$tosadd");
     } else {
-        @output = $ssh->capture("ping $dest count $pings size $bytes$tosadd");
+        @output = $ssh->capture("ping routing-instance $routing_instance $dest count $pings size $bytes$tosadd");
     }
     $ssh->system("quit");
 
@@ -201,6 +202,11 @@ specified with the option junosuser.
 DOC
 			_example => 'password',
 		},
+                routing_instance => {
+                        _doc => 'The routing-instance the ping should be sent from.',
+                        _example => 'default',
+                        _re => '.+',
+                },
 	});
 }
 
